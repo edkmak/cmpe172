@@ -1,11 +1,11 @@
+
+
 /*
 Edwin Mak
 007633834
-Midterm Code
+Midterm 1
 */
 
-
-#!/usr/bin/env node
 var request = require('superagent');
 var json2csv = require('json2csv');
 var fs = require('fs');
@@ -24,11 +24,8 @@ var repl = require("repl");
 	}
 
 	function Order(){
-		console.log(orders);
-
 		json2csv({ data: orders, quotes:''}, function(err,csv){
 			if(err)console.log(err);
-			//console.log(csv);	
 			fs.writeFile(CSVFILE__DEFAULT, csv, function(err) {
 			  if (err) throw err;
 			});
@@ -140,5 +137,24 @@ var repl = require("repl");
 	exports.Order = Order;
 
 	var local = repl.start({prompt: "coinbase> ", eval: myEval});
-	local.context.BUY = BUY();
+
+	function myEval(cmd, context, filename, callback) {
+	  var cmd = cmd.slice(0,-1);
+	  var commandArray = cmd.split(" ");
+	  commandArray[1] = parseInt(commandArray[1]);
+	  if(commandArray.length > 3){
+
+	  	callback(new Error('wrong input'))
+	  }
+	  if(commandArray[0] == "BUY" ){
+	  	BUY(commandArray[1], commandArray[2]);
+	  }else if(commandArray[0] == "SELL"){
+	  	SELL(commandArray[1],commandArray[2]);
+	  }else if(commandArray[0] == "ORDERS"){
+	  	Order();
+	  }
+
+	}
+	
+	
 	
